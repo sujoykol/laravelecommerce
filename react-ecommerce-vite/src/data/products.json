@@ -1,0 +1,24 @@
+
+[
+  {
+    "id": 1,
+    "name": "Classic Watch",
+    "price": 299.99,
+    "description": "Elegant and stylish watch for any occasion.",
+    "image": "/images/watch.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Wireless Earbuds",
+    "price": 129.99,
+    "description": "Crystal clear sound with noise cancellation.",
+    "image": "/images/earbuds.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Leather Bag",
+    "price": 199.99,
+    "description": "Genuine leather. Perfect for travel or work.",
+    "image": "/images/bag.jpg"
+  }
+]

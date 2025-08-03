@@ -17,7 +17,7 @@ class ProductController extends Controller
     public function index()
     {
         $product = Product::latest()->paginate(5);
-        return view('admin.product.list',['products'=>$product])->with('i', (request()->input('page', 1) - 1) * 5);
+        return view('admin.product.list', ['products' => $product])->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
     /**
@@ -27,8 +27,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $cat = Category::where('status',1)->get();
-        return view('admin.product.add',['cat'=>$cat]);
+        $cat = Category::where('status', 1)->get();
+        return view('admin.product.add', ['cat' => $cat]);
     }
 
     /**
@@ -44,7 +44,6 @@ class ProductController extends Controller
             'category_id' => 'required',
             'price' => 'required',
             'description' => 'required',
-            'stock' => 'required',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
         $input = $request->all();
@@ -55,17 +54,18 @@ class ProductController extends Controller
             $input['image'] = $profileImage;
         }
         $product = Product::create($input);
-
-        foreach ($request->options as $option) {
-            $productOption = $product->options()->create([
-                'name' => $option['name']
-            ]);
-            foreach ($option['values'] as $value) {
-                $productOption->values()->create(['value' => $value]);
+        if ($request->options) {
+            foreach ($request->options as $option) {
+                $productOption = $product->options()->create([
+                    'name' => $option['name']
+                ]);
+                foreach ($option['values'] as $value) {
+                    $productOption->values()->create(['value' => $value]);
+                }
             }
         }
         return redirect()->route('products.index')
-                        ->with('success','Product created successfully.');
+            ->with('success', 'Product created successfully.');
     }
 
 
@@ -75,10 +75,7 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
-    {
-
-    }
+    public function show(Product $product) {}
 
     /**
      * Show the form for editing the specified resource.
@@ -90,8 +87,7 @@ class ProductController extends Controller
     {
         $cat = Category::all();
 
-        return view('admin.product.edit',['product'=>$product,'cat'=>$cat]);
-
+        return view('admin.product.edit', ['product' => $product, 'cat' => $cat]);
     }
 
 
@@ -114,7 +110,7 @@ class ProductController extends Controller
         ]);
         $input = $request->all();
         if ($image = $request->file('image')) {
-           $imagePath = public_path('product/' . $product->image);
+            $imagePath = public_path('product/' . $product->image);
             if (file_exists($imagePath)) {
                 unlink($imagePath);
             }
@@ -122,14 +118,12 @@ class ProductController extends Controller
             $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
             $image->move($destinationPath, $profileImage);
             $input['image'] = $profileImage;
-        }
-        else
-        {
+        } else {
             unset($input['image']);
         }
         $product->update($input);
         return redirect()->route('products.index')
-                        ->with('success','Product updated successfully');
+            ->with('success', 'Product updated successfully');
     }
 
     /**
@@ -142,7 +136,7 @@ class ProductController extends Controller
     {
         $product->delete();
         return redirect()->route('products.index')
-        ->with('success','Product deleted successfully.');
+            ->with('success', 'Product deleted successfully.');
     }
 
     public function changeStatus(Request $request)
@@ -150,7 +144,7 @@ class ProductController extends Controller
         $pro = Product::find($request->id);
         $pro->status = $request->status;
         $pro->save();
-        return response()->json(['success'=>'Status change successfully.']);
+        return response()->json(['success' => 'Status change successfully.']);
     }
 
     public function changeFeatured(Request $request)
@@ -158,6 +152,6 @@ class ProductController extends Controller
         $pro = Product::find($request->id);
         $pro->featured = $request->featured;
         $pro->save();
-        return response()->json(['success'=>'Featured Status change successfully.']);
+        return response()->json(['success' => 'Featured Status change successfully.']);
     }
 }
